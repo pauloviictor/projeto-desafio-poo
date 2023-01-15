@@ -1,0 +1,319 @@
+Index: src/Main.java
+===================================================================
+diff --git a/src/Main.java b/src/Main.java
+new file mode 100644
+--- /dev/null	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
++++ b/src/Main.java	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
+@@ -0,0 +1,59 @@
++import java.sql.SQLOutput;
++import java.time.LocalDate;
++
++import br.edu.dio.desafio.dominio.Bootcamp;
++import br.edu.dio.desafio.dominio.Curso;
++import br.edu.dio.desafio.dominio.Dev;
++import br.edu.dio.desafio.dominio.Mentoria;
++
++public class Main {
++    public static void main(String[] args) {
++
++        Curso cursoJava = new Curso();
++        cursoJava.setTitulo("Curso de Java");
++        cursoJava.setCargaHoraria(8);
++        cursoJava.setDescricao("Curso ofertado pela DIO para aprender Java do zero");
++
++        Curso cursoAngular = new Curso();
++        cursoAngular.setTitulo("Curso de Angular");
++        cursoAngular.setCargaHoraria(16);
++        cursoAngular.setDescricao("Se você já conhece JS venha aprender mais sobre esse framework");
++
++        Mentoria mentoria = new Mentoria();
++        mentoria.setTitulo("mentoria de java");
++        mentoria.setDescricao("Mentoria para te guiar nos seus estudos Java");
++
++        Bootcamp bootcamp = new Bootcamp();
++        bootcamp.setNome("Bootcamp OrangeTech Java Developer Backend");
++        bootcamp.setDescricao("Se torne um backend developer Java com a trilha de estudos desse bootcamp");
++        bootcamp.getConteudos().add(cursoJava);
++        bootcamp.getConteudos().add(cursoAngular);
++        bootcamp.getConteudos().add(mentoria);
++
++        Dev devCamila = new Dev();
++        devCamila.setNome("Camila");
++        devCamila.inscreverBootcamp(bootcamp);
++        System.out.println("Conteúdos Inscritos Camila:" + devCamila.getConteudosInscritos());
++        devCamila.progredirBootcamp(cursoJava);
++        System.out.println("-");
++        System.out.println("Conteúdos Inscritos Camila:" + devCamila.getConteudosInscritos());
++        System.out.println("Conteúdos Concluídos Camila:" + devCamila.getConteudosConcluidos());
++        System.out.println("XP:" + devCamila.getXpTotal());
++
++        System.out.println("*******************************");
++
++        Dev devPaulo = new Dev();
++        devPaulo.setNome("Paulo");
++        devPaulo.inscreverBootcamp(bootcamp);
++        System.out.println("Conteúdos Inscritos Paulo:" + devPaulo.getConteudosInscritos());
++        devPaulo.progredirBootcamp(cursoJava);
++        devPaulo.progredirBootcamp(cursoAngular);
++        System.out.println("-");
++        System.out.println("Conteúdos Inscritos Paulo:" + devPaulo.getConteudosInscritos());
++        System.out.println("Conteúdos Concluídos Paulo:" + devPaulo.getConteudosConcluidos());
++        System.out.println("XP:" + devPaulo.getXpTotal());
++
++
++    }
++
++}
+Index: src/br/edu/dio/desafio/dominio/Bootcamp.java
+===================================================================
+diff --git a/src/br/edu/dio/desafio/dominio/Bootcamp.java b/src/br/edu/dio/desafio/dominio/Bootcamp.java
+new file mode 100644
+--- /dev/null	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
++++ b/src/br/edu/dio/desafio/dominio/Bootcamp.java	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
+@@ -0,0 +1,64 @@
++package br.edu.dio.desafio.dominio;
++
++import java.time.LocalDate;
++import java.util.HashSet;
++import java.util.LinkedHashSet;
++import java.util.Set;
++
++public class Bootcamp {
++
++    private String nome;
++    private String descricao;
++    private LocalDate dataInicial = LocalDate.now();
++    private LocalDate dataFinal = dataInicial.plusDays(60);
++    private Set<Dev> devsInscritos = new HashSet<>();
++    private Set<Conteudo> conteudos = new HashSet<>();
++
++    public String getNome() {
++        return nome;
++    }
++
++    public void setNome(String nome) {
++        this.nome = nome;
++    }
++
++    public String getDescricao() {
++        return descricao;
++    }
++
++    public void setDescricao(String descricao) {
++        this.descricao = descricao;
++    }
++
++    public LocalDate getDataInicial() {
++        return dataInicial;
++    }
++
++    public void setDataInicial(LocalDate dataInicial) {
++        this.dataInicial = dataInicial;
++    }
++
++    public LocalDate getDataFinal() {
++        return dataFinal;
++    }
++
++    public void setDataFinal(LocalDate dataFinal) {
++        this.dataFinal = dataFinal;
++    }
++
++    public Set<Dev> getDevsInscritos() {
++        return devsInscritos;
++    }
++
++    public void setDevsInscritos(Set<Dev> devsInscritos) {
++        this.devsInscritos = devsInscritos;
++    }
++
++    public Set<Conteudo> getConteudos() {
++        return conteudos;
++    }
++
++    public void setConteudos(Set<Conteudo> conteudos) {
++        this.conteudos = conteudos;
++    }
++}
+Index: src/br/edu/dio/desafio/dominio/Conteudo.java
+===================================================================
+diff --git a/src/br/edu/dio/desafio/dominio/Conteudo.java b/src/br/edu/dio/desafio/dominio/Conteudo.java
+new file mode 100644
+--- /dev/null	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
++++ b/src/br/edu/dio/desafio/dominio/Conteudo.java	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
+@@ -0,0 +1,26 @@
++package br.edu.dio.desafio.dominio;
++
++public abstract class Conteudo {
++
++    protected static final double XP_PADRAO = 10d;
++    private String titulo;
++    private String descricao;
++
++    public String getTitulo() {
++        return titulo;
++    }
++
++    public void setTitulo(String titulo) {
++        this.titulo = titulo;
++    }
++
++    public String getDescricao() {
++        return descricao;
++    }
++
++    public void setDescricao(String descricao) {
++        this.descricao = descricao;
++    }
++
++    public abstract double calcularXp();
++}
+Index: src/br/edu/dio/desafio/dominio/Curso.java
+===================================================================
+diff --git a/src/br/edu/dio/desafio/dominio/Curso.java b/src/br/edu/dio/desafio/dominio/Curso.java
+new file mode 100644
+--- /dev/null	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
++++ b/src/br/edu/dio/desafio/dominio/Curso.java	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
+@@ -0,0 +1,28 @@
++package br.edu.dio.desafio.dominio;
++
++public class Curso  extends Conteudo{
++    private int cargaHoraria;
++
++    public int getCargaHoraria() {
++        return cargaHoraria;
++    }
++
++    public void setCargaHoraria(int cargaHoraria) {
++        this.cargaHoraria = cargaHoraria;
++    }
++
++
++    @Override
++    public String toString() {
++        return "Curso{" +
++                "Titulo: '" + super.getTitulo() + "\n" +
++                "Descrição: '" + super.getDescricao() + "\n" +
++                "Carga Horária: " + cargaHoraria + " horas" +
++                '}';
++    }
++
++    @Override
++    public double calcularXp() {
++        return XP_PADRAO * cargaHoraria;
++    }
++}
+Index: src/br/edu/dio/desafio/dominio/Dev.java
+===================================================================
+diff --git a/src/br/edu/dio/desafio/dominio/Dev.java b/src/br/edu/dio/desafio/dominio/Dev.java
+new file mode 100644
+--- /dev/null	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
++++ b/src/br/edu/dio/desafio/dominio/Dev.java	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
+@@ -0,0 +1,71 @@
++package br.edu.dio.desafio.dominio;
++
++import java.util.HashSet;
++import java.util.LinkedHashSet;
++import java.util.Set;
++
++public class Dev {
++
++    private String nome;
++    private Set<Conteudo> conteudosInscritos = new LinkedHashSet<>();
++    private Set<Conteudo> conteudosConcluidos = new HashSet<>();
++
++    private double xpTotal;
++
++    public void inscreverBootcamp(Bootcamp bootcamp){
++        this.conteudosInscritos.addAll(bootcamp.getConteudos());
++        bootcamp.getDevsInscritos().add(this);
++    }
++
++    public void progredirBootcamp(Conteudo conteudo){
++        boolean conteudoInscrito = this.conteudosInscritos.contains(conteudo);
++        if(conteudoInscrito){
++            this.conteudosConcluidos.add(conteudo);
++            this.conteudosInscritos.remove(conteudo);
++            xpTotal += adicionarXp(conteudo);
++        }
++    }
++
++    private double adicionarXp(Conteudo conteudo){
++        if(this.conteudosInscritos.isEmpty()) System.out.println("Parabéns por concluir o Bootcamp!");
++        return conteudo.calcularXp();
++    }
++
++    public String getNome() {
++        return nome;
++    }
++
++    public void setNome(String nome) {
++        this.nome = nome;
++    }
++
++    public Set<Conteudo> getConteudosInscritos() {
++        return conteudosInscritos;
++    }
++
++    public void setConteudosInscritos(Set<Conteudo> conteudosInscritos) {
++        this.conteudosInscritos = conteudosInscritos;
++    }
++
++    public Set<Conteudo> getConteudosConcluidos() {
++        return conteudosConcluidos;
++    }
++
++    public void setConteudosConcluidos(Set<Conteudo> conteudosConcluidos) {
++        this.conteudosConcluidos = conteudosConcluidos;
++    }
++
++    public double getXpTotal() {
++        return xpTotal;
++    }
++
++    @Override
++    public String toString() {
++        return "Dev{" +
++                "nome='" + nome +
++                "\nConteudos Inscritos: " + conteudosInscritos +
++                "\nConteudos Concluidos: " + conteudosConcluidos +
++                "\nxpTotal=" + xpTotal + "xp" +
++                '}';
++    }
++}
+Index: src/br/edu/dio/desafio/dominio/Mentoria.java
+===================================================================
+diff --git a/src/br/edu/dio/desafio/dominio/Mentoria.java b/src/br/edu/dio/desafio/dominio/Mentoria.java
+new file mode 100644
+--- /dev/null	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
++++ b/src/br/edu/dio/desafio/dominio/Mentoria.java	(revision e7f4a4202923f6309dd1f8ae50548b9bad880151)
+@@ -0,0 +1,29 @@
++package br.edu.dio.desafio.dominio;
++
++import java.time.LocalDate;
++
++public class Mentoria extends Conteudo {
++    private LocalDate data = LocalDate.now();
++
++    public LocalDate getData() {
++        return data;
++    }
++
++    public void setData(LocalDate data) {
++        this.data = data;
++    }
++
++    @Override
++    public String toString() {
++        return "Mentoria{" +
++                "Título: '" + super.getTitulo() + "\n" +
++                "Descrição: '" + super.getDescricao() + "\n" +
++                "Data: " + this.data +
++                '}';
++    }
++
++    @Override
++    public double calcularXp() {
++        return XP_PADRAO + 80d;
++    }
++}
